@@ -67,3 +67,70 @@ app.UseAuthentication();
 app.MapControllers();
 
 app.Run();
+
+// ENDPOOINTS:
+// Auth TODO: Jean
+// POST /api/auth/register -> (Daftar Akun)
+
+// POST /api/auth/login -> (Login by email / username -> Get Token)
+
+// GET /api/auth/me ->(Data User Login)
+// ================================================================================================
+// User Management TODO: Jean
+// GET /api/users -> (List Semua User)
+
+// GET /api/users/{id} -> (Detail User)
+
+// POST /api/users -> (Tambah User Baru)
+
+// PUT /api/users/{id} -> (Update User)
+
+// DELETE /api/users/{id} -> (Hapus User)
+// ================================================================================================
+// Division Management TODO: Tenxi
+// GET /api/divisions -> (List Semua Divisi)
+
+// GET /api/divisions/{id} -> (Detail Divisi)
+
+// POST /api/divisions -> (Tambah Divisi Baru)
+
+// PUT /api/divisions/{id} -> (Update Divisi)  
+
+// DELETE /api/divisions/{id} -> (Hapus Divisi)
+// ================================================================================================
+// Role Management TODO: Daffa
+// GET /api/roles -> (List Semua Role)
+
+// GET /api/roles/{id} -> (Detail Role)
+
+// POST /api/roles -> (Tambah Role Baru)
+
+// PUT /api/roles/{id} -> (Update Role)
+
+// DELETE /api/roles/{id} -> (Hapus Role)
+// ================================================================================================
+// Project Management TODO: Ari
+// GET /api/projects -> (List Project User)
+
+// GET /api/projects/status/{status} -> (List Project Berdasarkan Status)
+
+// POST /api/projects -> (Buat Project Baru & Set Lead/Co-Lead)
+
+// GET /api/projects/{id} -> (Detail Project & Tim)
+
+// POST /api/projects/{id}/members -> (Tambah Member & Divisi ke Project)
+
+// DELETE /api/projects/{id}/members/{userId} -> (Hapus Member dari Project)
+// ================================================================================================
+// Task System TODO: Dhika
+// POST /api/tasks -> (Lead/Co-Lead Buat Tugas Baru)
+
+// GET /api/tasks/project/{projectId} -> (List Semua Tugas per Project)
+
+// GET /api/tasks/my-tasks -> (List Tugas Milik Member yang Login)
+
+// PATCH /api/tasks/{id}/start ->(Update Status: Todo->In Progress)
+
+// PUT /api/tasks/{id}/submit -> (Member Kirim Bukti & Request Approval)
+
+// PUT /api/tasks/{id}/approve -> (Lead/CoLead Klik Approve Final)

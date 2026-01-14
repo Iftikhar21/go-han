@@ -1,5 +1,6 @@
 using System.Text;
 using go_han.Data;
+using go_han.Repositories.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -48,7 +49,7 @@ builder.Services
         };  
     });
 
-// builder.Services.AddScoped<interface, repository>();
+builder.Services.AddScoped<IDivisionRepository, DivisionRepository>();
 
 var app = builder.Build();
 

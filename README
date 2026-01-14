@@ -1,0 +1,24 @@
+```
+└── 📁go-han
+    └── 📁.vscode
+    └── 📁bin
+    └── 📁Configurations
+    └── 📁controllers
+    └── 📁data
+    └── 📁DTOs
+    └── 📁helpers
+    └── 📁Interface
+    └── 📁mappers
+    └── 📁Migrations
+    └── 📁models
+    └── 📁obj
+    └── 📁Properties
+    └── 📁repositorys
+    └── 📁utils
+    ├── appsettings.Development.json
+    ├── appsettings.json
+    ├── Program.cs
+    ├── SchoolAPI.csproj
+    ├── SchoolAPI.http
+    └── SchoolAPI.sln
+```

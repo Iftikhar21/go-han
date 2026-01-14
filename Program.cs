@@ -1,5 +1,10 @@
 using System.Text;
+using go_han.Configurations;
 using go_han.Data;
+using go_han.Interface;
+using go_han.Repositories;
+using go_han.Repositories.IRepository;
+using go_han.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -27,8 +32,11 @@ builder.Services.AddSwaggerGen(
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings")
+);
 builder.Services
-    .AddAuthentication( options =>
+    .AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,10 +53,13 @@ builder.Services
             ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
             ValidAudience = builder.Configuration["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
-        };  
+        };
     });
 
-// builder.Services.AddScoped<interface, repository>();
+builder.Services.AddScoped<IPasswordUtils, PasswordUtils>();
+builder.Services.AddScoped<IJwtUtils, JwtUtils>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
@@ -69,23 +80,6 @@ app.MapControllers();
 app.Run();
 
 // ENDPOOINTS:
-// Auth TODO: Jean
-// POST /api/auth/register -> (Daftar Akun)
-
-// POST /api/auth/login -> (Login by email / username -> Get Token)
-
-// GET /api/auth/me ->(Data User Login)
-// ================================================================================================
-// User Management TODO: Jean
-// GET /api/users -> (List Semua User)
-
-// GET /api/users/{id} -> (Detail User)
-
-// POST /api/users -> (Tambah User Baru)
-
-// PUT /api/users/{id} -> (Update User)
-
-// DELETE /api/users/{id} -> (Hapus User)
 // ================================================================================================
 // Division Management TODO: Tenxi
 // GET /api/divisions -> (List Semua Divisi)

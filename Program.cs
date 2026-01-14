@@ -61,6 +61,8 @@ builder.Services.AddScoped<IPasswordUtils, PasswordUtils>();
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+// builder.Services.AddScoped<interface, repository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 var app = builder.Build();
 

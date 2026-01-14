@@ -15,24 +15,26 @@ namespace go_han.Controllers
     public class TaskItemController : ControllerBase
     {
         private readonly ITaskItemRepository _taskItemRepository;
+        private readonly IUserRepository _userRepository;
 
-        public TaskItemController(ITaskItemRepository taskItemRepository)
+        public TaskItemController(ITaskItemRepository taskItemRepository, IUserRepository userRepository)
         {
             _taskItemRepository = taskItemRepository ?? throw new ArgumentNullException(nameof(taskItemRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllTasks()
         {
-            var tasks = await _taskItemRepository.GetAll();
+            var tasks = await _taskItemRepository.GetAllTaskAsync();
             var response = tasks.Select(task => TaskItemMapper.TaskResponse(task)).ToList();
             return Ok(ResponseResult.Success(response, "Successfully retrieve data"));
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetTaskById(int id)
         {
-            var task = await _taskItemRepository.GetById(id);
+            var task = await _taskItemRepository.GetTaskByIdAsync(id);
 
             if(task == null)
             return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
@@ -42,9 +44,9 @@ namespace go_han.Controllers
         }
 
         [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetByStatus(int status)
+        public async Task<IActionResult> GetTaskByStatus(int status)
         {
-            var tasks = await _taskItemRepository.GetByStatus(status);
+            var tasks = await _taskItemRepository.GetTaskByStatusAsync(status);
 
             if(tasks == null)
             return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
@@ -54,9 +56,9 @@ namespace go_han.Controllers
         }
 
         [HttpGet("project/{id}")]
-        public async Task<IActionResult> GetByProjectId(int id)
+        public async Task<IActionResult> GetTaskByProjectId(int id)
         {
-            var tasks = await _taskItemRepository.GetByProjectId(id);
+            var tasks = await _taskItemRepository.GetTaskByProjectIdAsync(id);
 
             if(tasks == null)
             return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
@@ -76,24 +78,22 @@ namespace go_han.Controllers
             // if(isProject == null)
             // return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Project Id not found.."));
 
-            // var isAssigneeIdValid = 
-            // if(isAssigneeIdValid == null)
-            // return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Assignee Id not found.."));
+            var isAssigneeIdValid = await _userRepository.GetUserByIdAsync(req.AssigneeId);
+            if(isAssigneeIdValid == null)
+            return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Assignee Id not found.."));
 
-            await _taskItemRepository.CreateTask(newTask);
+            await _taskItemRepository.CreateTaskAsync(newTask);
             return Ok(ResponseResult.Success(newTask, "Successfully create task"));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            var task = await _taskItemRepository.GetById(id);
+            var task = await _taskItemRepository.DeleteTaskAsync(id);
+            if (task == false)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("User not found"));
 
-            if(task == null)
-            return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
-
-            await _taskItemRepository.Remove(task);
-            return Ok(ResponseResult.Success(task, "Successfully Delete Task"));
+            return Ok(ResponseResult.Success("Task deleted"));
         }
     }
 }

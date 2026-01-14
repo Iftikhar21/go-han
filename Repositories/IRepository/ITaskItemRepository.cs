@@ -8,12 +8,12 @@ namespace go_han.Repositories.IRepository
 {
     public interface ITaskItemRepository
     {
-        Task<List<TaskItem>> GetAll();
-        Task<TaskItem?> GetById(int id);
-        Task<List<TaskItem>> GetByStatus(int status);
-        Task<List<TaskItem>> GetByProjectId(int id);
-        Task CreateTask(TaskItem item);
-        Task Remove(TaskItem item);
+        Task<List<TaskItem>> GetAllTaskAsync();
+        Task<TaskItem?> GetTaskByIdAsync(int id);
+        Task<List<TaskItem>> GetTaskByStatusAsync(int status);
+        Task<List<TaskItem>> GetTaskByProjectIdAsync(int id);
+        Task<TaskItem> CreateTaskAsync(TaskItem item);
+        Task<bool> DeleteTaskAsync(int id);
         // SISA EDIT
     }
 }

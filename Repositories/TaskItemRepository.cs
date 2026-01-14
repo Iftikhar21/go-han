@@ -19,36 +19,42 @@ namespace go_han.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<List<TaskItem>> GetAll()
+        public async Task<List<TaskItem>> GetAllTaskAsync()
         {
             return await _context.TaskItems.Include(p => p.Project).Include(u => u.Assignee).Include(u => u.ApprovedBy).ToListAsync();
         }
 
-        public async Task<TaskItem?> GetById(int id)
+        public async Task<TaskItem?> GetTaskByIdAsync(int id)
         {
             return await _context.TaskItems.Include(p => p.Project).Include(u => u.Assignee).Include(u => u.ApprovedBy).FirstOrDefaultAsync(w => w.Id == id);
         }
 
-        public async Task<List<TaskItem>> GetByStatus(int status)
+        public async Task<List<TaskItem>> GetTaskByStatusAsync(int status)
         {
             return await _context.TaskItems.Include(p => p.Project).Include(u => u.Assignee).Include(u => u.ApprovedBy).Where(p => p.Status == status).ToListAsync();
         }
 
-        public async Task<List<TaskItem>> GetByProjectId(int id)
+        public async Task<List<TaskItem>> GetTaskByProjectIdAsync(int id)
         {
             return await _context.TaskItems.Include(p => p.Project).Include(u => u.Assignee).Include(u => u.ApprovedBy).Where(p => p.ProjectId == id).ToListAsync();
         }
 
-        public async Task CreateTask(TaskItem item)
+        public async Task<TaskItem> CreateTaskAsync(TaskItem item)
         {
             _context.TaskItems.Add(item);
             await _context.SaveChangesAsync();
+            return item;
         }
 
-        public async Task Remove(TaskItem item)
+        public async Task<bool> DeleteTaskAsync(int id)
         {
-            _context.Remove(item);
+            var existTask = await _context.TaskItems.FindAsync(id);
+            if(existTask == null)
+            return false;
+
+            _context.Remove(existTask);
             await _context.SaveChangesAsync();
+            return true;
         }
 
     }

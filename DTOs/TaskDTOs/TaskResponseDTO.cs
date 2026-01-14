@@ -14,7 +14,7 @@ namespace go_han.DTOs.TaskDTOs
         public Project? ProjectData {get; set;}
 
         public int AssigneeId { get; set; }
-        public User? Assignee {get; set;}
+        public Models.User? Assignee {get; set;}
 
         public required string Title { get; set; }
         public required string Content { get; set; }
@@ -26,11 +26,10 @@ namespace go_han.DTOs.TaskDTOs
         // Status: 0=Todo, 1=InProgress, 2=MemberApproved, 3=FullyCompleted
         public int Status { get; set; } = 0;
 
-
         // Approval System
         public  string MemberComment { get; set; } = string.Empty;
         public int? ApprovedById { get; set; }
-        public User? ApprovedBy {get; set;}
+        public Models.User? ApprovedBy {get; set;}
 
         public DateTime? ApprovedAt { get; set; }
     }

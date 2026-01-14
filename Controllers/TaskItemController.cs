@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using go_han.DTOs.TaskDTOs;
 using go_han.Mappers;
 using go_han.Repositories.IRepository;
+using go_han.Repsitories.IRepositories;
 using go_han.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,13 @@ namespace go_han.Controllers
     {
         private readonly ITaskItemRepository _taskItemRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
 
-        public TaskItemController(ITaskItemRepository taskItemRepository, IUserRepository userRepository)
+        public TaskItemController(ITaskItemRepository taskItemRepository, IUserRepository userRepository, IProjectRepository projectRepository)
         {
             _taskItemRepository = taskItemRepository ?? throw new ArgumentNullException(nameof(taskItemRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         }
 
         [HttpGet]
@@ -74,9 +77,9 @@ namespace go_han.Controllers
             if(newTask == null)
             return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Input Invalid!"));
 
-            // var isProject = 
-            // if(isProject == null)
-            // return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Project Id not found.."));
+            var isProject = await _projectRepository.GetProjectByIdAsync(req.ProjectId);
+            if(isProject == null)
+            return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Project Id not found.."));
 
             var isAssigneeIdValid = await _userRepository.GetUserByIdAsync(req.AssigneeId);
             if(isAssigneeIdValid == null)
@@ -84,6 +87,35 @@ namespace go_han.Controllers
 
             await _taskItemRepository.CreateTaskAsync(newTask);
             return Ok(ResponseResult.Success(newTask, "Successfully create task"));
+        }
+
+        [HttpPatch("{id}/start")]
+        public async Task<IActionResult> UpdateStatusTask(int id, int status)
+        {
+            var result = await _taskItemRepository.UpdateStatusTaskAsync(id, status);
+            
+            if (result == null) 
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+
+            var response = TaskItemMapper.TaskResponse(result);
+            return Ok(ResponseResult.Success(response, "Successfully update status"));
+        }
+
+        [HttpPut("{id}/submit")]
+        public async Task<IActionResult> SubmitTask(int id, int status, string memberComment)
+        {
+            var result = await _taskItemRepository.UpdateSubmitTaskAsync(id, status, memberComment);
+            if (result == null) return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+            return Ok(ResponseResult.Success(result, "Successfully update status"));
+        }
+
+        // PUT: api/tasks/5/approve?status=3&approvedById=10
+        [HttpPut("{id}/approve")]
+        public async Task<IActionResult> ApproveTask(int id, int status, int approvedById, DateTime? approvedAt = null)
+        {
+            var result = await _taskItemRepository.UpdateApprovalTaskAsync(id, status, approvedById, approvedAt);
+            if (result == null) return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+            return Ok(ResponseResult.Success(result, "Successfully update status"));
         }
 
         [HttpDelete("{id}")]

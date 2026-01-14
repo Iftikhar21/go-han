@@ -45,13 +45,5 @@ namespace go_han.Mappers
                 Status = dto.Status
             };
         }
-
-        // public static TaskItem TaskRequest(TaskRequestDTO dto)
-        // {
-        //     return new TaskItem
-        //     {
-
-        //     };
-        // }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using go_han.Data;
+using go_han.DTOs.TaskDTOs;
 using go_han.Models;
 using go_han.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,44 @@ namespace go_han.Repositories
             _context.TaskItems.Add(item);
             await _context.SaveChangesAsync();
             return item;
+        }
+
+        public async Task<TaskItem?> UpdateStatusTaskAsync(int id, int status)
+        {
+            var taskExist = await _context.TaskItems.FindAsync(id);
+
+            if(taskExist == null)return null;
+
+            taskExist.Status = status;
+
+            await _context.SaveChangesAsync();
+            return taskExist;
+        }
+
+
+        public async Task<TaskItem?> UpdateSubmitTaskAsync(int id, int status, string memberComment)
+        {
+            var task = await _context.TaskItems.FindAsync(id);
+            if (task == null) return null;
+
+            task.Status = status;
+            task.MemberComment = memberComment;
+
+            await _context.SaveChangesAsync();
+            return task;
+        }
+
+        public async Task<TaskItem?> UpdateApprovalTaskAsync(int id, int status, int approvedById, DateTime? approvedAt)
+        {
+            var task = await _context.TaskItems.FindAsync(id);
+            if (task == null) return null;
+
+            task.Status = status;
+            task.ApprovedById = approvedById;
+            task.ApprovedAt = approvedAt ?? DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return task;
         }
 
         public async Task<bool> DeleteTaskAsync(int id)

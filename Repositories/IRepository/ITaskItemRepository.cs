@@ -12,6 +12,8 @@ namespace go_han.Repositories.IRepository
         Task<TaskItem?> GetById(int id);
         Task<List<TaskItem>> GetByStatus(int status);
         Task<List<TaskItem>> GetByProjectId(int id);
-        // SISA POST SAMA EDIT DELETE JUGA
+        Task CreateTask(TaskItem item);
+        Task Remove(TaskItem item);
+        // SISA EDIT
     }
 }

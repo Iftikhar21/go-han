@@ -25,7 +25,7 @@ namespace go_han.Controllers
         public async Task<IActionResult> GetAll()
         {
             var tasks = await _taskItemRepository.GetAll();
-            var response = tasks.Select(task => TaskItemMapper.TaskResponse(tasks)).ToList();
+            var response = tasks.Select(task => TaskItemMapper.TaskResponse(task)).ToList();
             return Ok(ResponseResult.Success(response, "Successfully retrieve data"));
         }
 
@@ -63,6 +63,37 @@ namespace go_han.Controllers
 
             var response = tasks.Select(task => TaskItemMapper.TaskResponse(task)).ToList();
             return Ok(ResponseResult.Success(response, "Successfully retrieve data"));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTask(TaskCreateRequestDTO req)
+        {
+            var newTask = TaskItemMapper.TaskCreate(req);
+            if(newTask == null)
+            return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Input Invalid!"));
+
+            // var isProject = 
+            // if(isProject == null)
+            // return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Project Id not found.."));
+
+            // var isAssigneeIdValid = 
+            // if(isAssigneeIdValid == null)
+            // return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Assignee Id not found.."));
+
+            await _taskItemRepository.CreateTask(newTask);
+            return Ok(ResponseResult.Success(newTask, "Successfully create task"));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTask(int id)
+        {
+            var task = await _taskItemRepository.GetById(id);
+
+            if(task == null)
+            return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+
+            await _taskItemRepository.Remove(task);
+            return Ok(ResponseResult.Success(task, "Successfully Delete Task"));
         }
     }
 }

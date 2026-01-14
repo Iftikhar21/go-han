@@ -32,9 +32,18 @@ namespace go_han.Mappers
             };
         }
 
-        internal static object TaskResponse(List<TaskItem> tasks)
+        public static TaskItem TaskCreate(TaskCreateRequestDTO dto)
         {
-            throw new NotImplementedException();
+            return new TaskItem
+            {
+                ProjectId = dto.ProjectId,
+                AssigneeId = dto.AssigneeId,
+                Title = dto.Title,
+                Content = dto.Content,
+                Difficulty = dto.Difficulty,
+                Deadline = dto.Deadline,
+                Status = dto.Status
+            };
         }
 
         // public static TaskItem TaskRequest(TaskRequestDTO dto)

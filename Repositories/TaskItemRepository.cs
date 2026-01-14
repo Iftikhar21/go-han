@@ -39,6 +39,17 @@ namespace go_han.Repositories
             return await _context.TaskItems.Include(p => p.Project).Include(u => u.Assignee).Include(u => u.ApprovedBy).Where(p => p.ProjectId == id).ToListAsync();
         }
 
+        public async Task CreateTask(TaskItem item)
+        {
+            _context.TaskItems.Add(item);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Remove(TaskItem item)
+        {
+            _context.Remove(item);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

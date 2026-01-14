@@ -27,5 +27,15 @@ namespace go_han.Utils
                 Data = default
             };
         }
+
+        public static ApiResponse<object> Fail(string message)
+        {
+            return new ApiResponse<object>
+            {
+                Success = false,
+                Message = message,
+                Data = null
+            };
+        }
     }
 }

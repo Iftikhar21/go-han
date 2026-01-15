@@ -7,10 +7,12 @@ using go_han.Repsitories.IRepositories;
 using go_han.Models;
 using go_han.DTOs.Projects;
 using go_han.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace go_han.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProjectController : ControllerBase

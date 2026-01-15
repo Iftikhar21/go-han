@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using go_han.DTOs.Roles;
 using go_han.DTOs.User;
 using go_han.Models;
 
@@ -16,9 +17,12 @@ namespace go_han.Mappers
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
-                RoleId = user.RoleId,
 
-                Role = user.Role
+                Role = new RoleReadDto
+                {
+                    Id = user.Role.Id,
+                    RoleName = user.Role.RoleName
+                }
             };
         }
 

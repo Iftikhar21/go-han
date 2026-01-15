@@ -10,9 +10,11 @@ using go_han.Repositories;
 using go_han.Utils;
 using Microsoft.AspNetCore.Mvc;
 using go_han.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace go_han.Controllers.Roles
 {
+    [Authorize]
     [ApiController]
     [Route("api/roles")]
     public class RoleController : ControllerBase

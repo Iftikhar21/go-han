@@ -20,19 +20,16 @@ namespace go_han.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repository;
-        private readonly IPasswordUtils _passwordUtils;
         private readonly IUserRepository _userRepository;
         private readonly IJwtUtils _jwtUtils;
 
         public AuthController(
                 IAuthRepository repository,
-                IPasswordUtils passwordUtils,
                 IUserRepository userRepository,
                 IJwtUtils jwtUtils
             )
         {
             this._repository = repository;
-            this._passwordUtils = passwordUtils;
             this._userRepository = userRepository;
             this._jwtUtils = jwtUtils;
         }
@@ -52,9 +49,6 @@ namespace go_han.Controllers
         {
             var user = await _repository.Login(userLoginDto.Email, userLoginDto.Password);
             if (user == null)
-                return NotFound(ResponseResult.Fail<UserDto>("Invalid email or password"));
-
-            if (!_passwordUtils.VerifyPassword(userLoginDto.Password, user.PasswordHash))
                 return NotFound(ResponseResult.Fail<UserDto>("Invalid email or password"));
 
             var token = _jwtUtils.GenerateJwtToken(user);

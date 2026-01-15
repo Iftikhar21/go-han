@@ -9,25 +9,36 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using go_han.Repsitories.IRepositories;
+using go_han.Repsitories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(
-    c =>
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Go Han API", Version = "v1" });
+
+    var securitySchema = new OpenApiSecurityScheme
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Go-Han API", Version = "v1" });
-        c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        Description = "JWT Auth Bearer Scheme",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        Reference = new OpenApiReference
         {
-            Description = "JWT Authorization header using the Bearer scheme.",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.Http,
-            Scheme = "Bearer"
-        });
-    }
-);
+            Type = ReferenceType.SecurityScheme,
+            Id = JwtBearerDefaults.AuthenticationScheme
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securitySchema);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securitySchema, new string[] { } }
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -54,6 +65,18 @@ builder.Services
             ValidAudience = builder.Configuration["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = c =>
+            {
+                var authHeader = c.Request.Headers["Authorization"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer"))
+                    c.Token = authHeader.Substring("Bearer ".Length).Trim();
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddScoped<IDivisionRepository, DivisionRepository>();
@@ -61,8 +84,9 @@ builder.Services.AddScoped<IPasswordUtils, PasswordUtils>();
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-// builder.Services.AddScoped<interface, repository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
 var app = builder.Build();
 
@@ -75,8 +99,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

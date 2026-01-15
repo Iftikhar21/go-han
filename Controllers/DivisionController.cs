@@ -7,10 +7,12 @@ using go_han.Mappers;
 using go_han.Models;
 using go_han.Repositories.IRepository;
 using go_han.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace go_han.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/divisions")]
     public class DivisionController : ControllerBase

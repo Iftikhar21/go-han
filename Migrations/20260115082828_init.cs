@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace go_han.Migrations
 {
     /// <inheritdoc />
-    public partial class initial_create : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -133,6 +133,7 @@ namespace go_han.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     AssigneeId = table.Column<int>(type: "int", nullable: false),
+                    AssignerId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -160,8 +161,21 @@ namespace go_han.Migrations
                         name: "FK_TaskItems_Users_AssigneeId",
                         column: x => x.AssigneeId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TaskItems_Users_AssignerId",
+                        column: x => x.AssignerId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "Divisions",
+                columns: new[] { "Id", "DivisionName" },
+                values: new object[,]
+                {
+                    { 1, "Frontend Dev" },
+                    { 2, "Backend Dev" }
                 });
 
             migrationBuilder.InsertData(
@@ -169,9 +183,43 @@ namespace go_han.Migrations
                 columns: new[] { "Id", "RoleName" },
                 values: new object[,]
                 {
-                    { 1, "super-admin" },
-                    { 2, "admin" },
-                    { 3, "employee" }
+                    { 1, "admin" },
+                    { 2, "employee" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "PasswordHash", "RoleId", "Username" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4900), "admin@example.com", "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==", 1, "admin" },
+                    { 2, new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4930), "employee@example.com", "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==", 2, "employee" },
+                    { 3, new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4930), "Edi@example.com", "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==", 2, "Edi" },
+                    { 4, new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4930), "Kurniadi@example.com", "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==", 2, "Kurniadi" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Projects",
+                columns: new[] { "Id", "CoLeadId", "Description", "EndDate", "LeadId", "ProjectName", "StartDate", "Status" },
+                values: new object[] { 1, 2, "Description A", new DateTime(2026, 1, 22, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4990), 1, "Project A", new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4980), "In Progress" });
+
+            migrationBuilder.InsertData(
+                table: "ProjectMembers",
+                columns: new[] { "Id", "DivisionId", "ProjectId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, 1 },
+                    { 2, 2, 1, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TaskItems",
+                columns: new[] { "Id", "ApprovedAt", "ApprovedById", "AssigneeId", "AssignerId", "Content", "Deadline", "Difficulty", "MemberComment", "ProjectId", "Status", "Title" },
+                values: new object[,]
+                {
+                    { 1, null, null, 3, 1, "Description A", null, "Easy", "", 1, 0, "Task A" },
+                    { 2, null, null, 3, 2, "Description B", null, "Medium", "", 1, 0, "Task B" },
+                    { 3, null, null, 4, 1, "Description C", null, "Hard", "", 1, 1, "Task C" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -208,6 +256,11 @@ namespace go_han.Migrations
                 name: "IX_TaskItems_AssigneeId",
                 table: "TaskItems",
                 column: "AssigneeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskItems_AssignerId",
+                table: "TaskItems",
+                column: "AssignerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskItems_ProjectId",

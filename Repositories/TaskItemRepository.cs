@@ -27,7 +27,15 @@ namespace go_han.Repositories
                     .ThenInclude(p => p.Lead)
                 .Include(p => p.Project)
                     .ThenInclude(p => p.CoLead)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.User)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.Division)
                 .Include(u => u.Assignee)
+                    .ThenInclude(u => u.Role)
+                .Include(u => u.Assigner)
                     .ThenInclude(u => u.Role)
                 .Include(u => u.ApprovedBy)
                     .ThenInclude(u => u.Role)
@@ -41,7 +49,15 @@ namespace go_han.Repositories
                     .ThenInclude(p => p.Lead)
                 .Include(p => p.Project)
                     .ThenInclude(p => p.CoLead)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.User)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.Division)
                 .Include(u => u.Assignee)
+                    .ThenInclude(u => u.Role)
+                .Include(u => u.Assigner)
                     .ThenInclude(u => u.Role)
                 .Include(u => u.ApprovedBy)
                     .ThenInclude(u => u.Role)
@@ -55,7 +71,15 @@ namespace go_han.Repositories
                     .ThenInclude(p => p.Lead)
                 .Include(p => p.Project)
                     .ThenInclude(p => p.CoLead)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.User)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.Division)
                 .Include(u => u.Assignee)
+                    .ThenInclude(u => u.Role)
+                .Include(u => u.Assigner)
                     .ThenInclude(u => u.Role)
                 .Include(u => u.ApprovedBy)
                     .ThenInclude(u => u.Role)
@@ -70,7 +94,15 @@ namespace go_han.Repositories
                     .ThenInclude(p => p.Lead)
                 .Include(p => p.Project)
                     .ThenInclude(p => p.CoLead)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.User)
+                .Include(p => p.Project)
+                    .ThenInclude(p => p.Members)
+                        .ThenInclude(pm => pm.Division)
                 .Include(u => u.Assignee)
+                    .ThenInclude(u => u.Role)
+                .Include(u => u.Assigner)
                     .ThenInclude(u => u.Role)
                 .Include(u => u.ApprovedBy)
                     .ThenInclude(u => u.Role)
@@ -83,6 +115,34 @@ namespace go_han.Repositories
             _context.TaskItems.Add(item);
             await _context.SaveChangesAsync();
             return item;
+        }
+
+        public async Task<TaskItem?> UpdateTaskAsync(int id, TaskItem item)
+        {
+            var taskExist = await _context.TaskItems.FindAsync(id);
+            if (taskExist == null)
+                return null;
+
+            taskExist.ProjectId = item.ProjectId;
+            taskExist.AssigneeId = item.AssigneeId;
+            taskExist.Title = item.Title;
+            taskExist.Content = item.Content;
+            taskExist.Difficulty = item.Difficulty;
+            taskExist.Deadline = item.Deadline;
+
+            await _context.SaveChangesAsync();
+            return taskExist;
+        }
+
+        public async Task<TaskItem?> UpdateAssignTaskAsync(int id, int assigneeId)
+        {
+            var taskExist = await _context.TaskItems.FindAsync(id);
+            if (taskExist == null)
+                return null;
+
+            taskExist.AssigneeId = assigneeId;
+            await _context.SaveChangesAsync();
+            return taskExist;
         }
 
         public async Task<TaskItem?> UpdateStatusTaskAsync(int id, int status)

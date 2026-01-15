@@ -14,6 +14,8 @@ namespace go_han.Repositories.IRepository
         public Task<List<TaskItem>> GetTaskByStatusAsync(int status);
         public Task<List<TaskItem>> GetTaskByProjectIdAsync(int id);
         public Task<TaskItem> CreateTaskAsync(TaskItem item);
+        public Task<TaskItem?> UpdateTaskAsync(int id, TaskItem item);
+        public Task<TaskItem?> UpdateAssignTaskAsync(int id, int assigneeId);
         public Task<TaskItem?> UpdateStatusTaskAsync(int id, int status);
         public Task<TaskItem?> UpdateApprovalTaskAsync(int id, int status, int approvedById, DateTime? approvedAt);
         public Task<TaskItem?> UpdateSubmitTaskAsync(int id, int status, string memberComment);

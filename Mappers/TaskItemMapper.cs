@@ -36,6 +36,18 @@ namespace go_han.Mappers
                 };
             }
 
+            UserDto? assigner = null;
+            if (task.Assigner != null)
+            {
+                assigner = new UserDto
+                {
+                    Id = task.Assigner.Id,
+                    Username = task.Assigner.Username,
+                    Email = task.Assigner.Email,
+                    Role = assigneeRole
+                };
+            }
+
             RoleReadDto? approvedByRole = null;
             if (task.ApprovedBy?.Role != null)
             {
@@ -61,6 +73,20 @@ namespace go_han.Mappers
             ProjectDetailDto? projectDto = null;
             if (task.Project != null)
             {
+                var membersList = new List<ProjectMemberDto>();
+                if (task.Project.Members != null)
+                {
+                    foreach (var member in task.Project.Members)
+                    {
+                        membersList.Add(new ProjectMemberDto
+                        {
+                            UserId = member.User.Id,
+                            Username = member.User.Username,
+                            Division = member.Division.DivisionName
+                        });
+                    }
+                }
+
                 projectDto = new ProjectDetailDto
                 {
                     Id = task.Project.Id,
@@ -70,7 +96,8 @@ namespace go_han.Mappers
                     Lead = task.Project.Lead?.Username ?? "",
                     CoLead = task.Project.CoLead?.Username,
                     StartDate = task.Project.StartDate,
-                    EndDate = task.Project.EndDate
+                    EndDate = task.Project.EndDate,
+                    Members = membersList
                 };
             }
 
@@ -81,6 +108,8 @@ namespace go_han.Mappers
                 ProjectData = projectDto,
                 AssigneeId = task.AssigneeId,
                 Assignee = assigneeDto,
+                AssignerId = task.AssignerId,
+                Assigner = assigner,
                 Title = task.Title,
                 Content = task.Content,
                 Difficulty = task.Difficulty,
@@ -89,7 +118,7 @@ namespace go_han.Mappers
                 MemberComment = task.MemberComment,
                 ApprovedById = task.ApprovedById,
                 ApprovedBy = approvedByDto,
-                ApprovedAt = task.ApprovedAt
+                ApprovedAt = task.ApprovedAt,
             };
         }
 

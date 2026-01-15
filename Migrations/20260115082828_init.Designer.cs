@@ -12,8 +12,8 @@ using go_han.Data;
 namespace go_han.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260114072904_initial_create")]
-    partial class initial_create
+    [Migration("20260115082828_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,18 @@ namespace go_han.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Divisions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DivisionName = "Frontend Dev"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DivisionName = "Backend Dev"
+                        });
                 });
 
             modelBuilder.Entity("go_han.Models.Project", b =>
@@ -83,6 +95,19 @@ namespace go_han.Migrations
                     b.HasIndex("LeadId");
 
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CoLeadId = 2,
+                            Description = "Description A",
+                            EndDate = new DateTime(2026, 1, 22, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4990),
+                            LeadId = 1,
+                            ProjectName = "Project A",
+                            StartDate = new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4980),
+                            Status = "In Progress"
+                        });
                 });
 
             modelBuilder.Entity("go_han.Models.ProjectMember", b =>
@@ -111,6 +136,22 @@ namespace go_han.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ProjectMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DivisionId = 1,
+                            ProjectId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DivisionId = 2,
+                            ProjectId = 1,
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("go_han.Models.Role", b =>
@@ -134,16 +175,11 @@ namespace go_han.Migrations
                         new
                         {
                             Id = 1,
-                            RoleName = "super-admin"
-                        },
-                        new
-                        {
-                            Id = 2,
                             RoleName = "admin"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 2,
                             RoleName = "employee"
                         });
                 });
@@ -163,6 +199,9 @@ namespace go_han.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("AssigneeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AssignerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -197,9 +236,49 @@ namespace go_han.Migrations
 
                     b.HasIndex("AssigneeId");
 
+                    b.HasIndex("AssignerId");
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("TaskItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AssigneeId = 3,
+                            AssignerId = 1,
+                            Content = "Description A",
+                            Difficulty = "Easy",
+                            MemberComment = "",
+                            ProjectId = 1,
+                            Status = 0,
+                            Title = "Task A"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AssigneeId = 3,
+                            AssignerId = 2,
+                            Content = "Description B",
+                            Difficulty = "Medium",
+                            MemberComment = "",
+                            ProjectId = 1,
+                            Status = 0,
+                            Title = "Task B"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AssigneeId = 4,
+                            AssignerId = 1,
+                            Content = "Description C",
+                            Difficulty = "Hard",
+                            MemberComment = "",
+                            ProjectId = 1,
+                            Status = 1,
+                            Title = "Task C"
+                        });
                 });
 
             modelBuilder.Entity("go_han.Models.User", b =>
@@ -237,6 +316,44 @@ namespace go_han.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4900),
+                            Email = "admin@example.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==",
+                            RoleId = 1,
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4930),
+                            Email = "employee@example.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==",
+                            RoleId = 2,
+                            Username = "employee"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4930),
+                            Email = "Edi@example.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==",
+                            RoleId = 2,
+                            Username = "Edi"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 1, 15, 15, 28, 28, 23, DateTimeKind.Local).AddTicks(4930),
+                            Email = "Kurniadi@example.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAENN3GZoVTKgTDI9++cS6pBSlbQ204/mNm2GBvfOUNt9nyQEKvxILCx0mTJVoVL+sCw==",
+                            RoleId = 2,
+                            Username = "Kurniadi"
+                        });
                 });
 
             modelBuilder.Entity("go_han.Models.Project", b =>
@@ -294,7 +411,13 @@ namespace go_han.Migrations
                     b.HasOne("go_han.Models.User", "Assignee")
                         .WithMany()
                         .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("go_han.Models.User", "Assigner")
+                        .WithMany()
+                        .HasForeignKey("AssignerId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("go_han.Models.Project", "Project")
@@ -306,6 +429,8 @@ namespace go_han.Migrations
                     b.Navigation("ApprovedBy");
 
                     b.Navigation("Assignee");
+
+                    b.Navigation("Assigner");
 
                     b.Navigation("Project");
                 });

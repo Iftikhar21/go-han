@@ -16,7 +16,7 @@ namespace go_han.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/projects")]
     public class ProjectController : ControllerBase
     {
         private readonly IProjectRepository _projectRepository;

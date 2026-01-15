@@ -87,10 +87,39 @@ namespace go_han.Controllers
             if (isAssigneeIdValid == null)
                 return BadRequest(ResponseResult.Fail<TaskResponseDTO>("Assignee Id not found.."));
 
+            var isAssignerIdValid = await _userRepository.GetUserByIdAsync(req.AssignerId);
+            if (isAssignerIdValid == null)
+                return BadRequest(ResponseResult.Fail<TaskResponseDTO>("Assigner Id not found.."));
+
             var createdTask = await _taskItemRepository.CreateTaskAsync(newTask);
             var response = TaskItemMapper.TaskResponse(createdTask);
             return CreatedAtAction(nameof(GetTaskById), new { id = createdTask.Id }, ResponseResult.Success(response, "Successfully create task"));
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskCreateRequestDTO dto)
+        {
+            var item = TaskItemMapper.TaskCreate(dto);
+
+            var result = await _taskItemRepository.UpdateTaskAsync(id, item);
+            if (result == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+
+            var response = TaskItemMapper.TaskResponse(result);
+            return Ok(ResponseResult.Success(response, "Successfully update task"));
+        }
+
+        [HttpPatch("{id}/assign")]
+        public async Task<IActionResult> UpdateAssignTask(int id, int assigneeId)
+        {
+            var result = await _taskItemRepository.UpdateAssignTaskAsync(id, assigneeId);
+            if (result == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+
+            var response = TaskItemMapper.TaskResponse(result);
+            return Ok(ResponseResult.Success(response, "Successfully update assignee"));
+        }
+
 
         [HttpPatch("{id}/start")]
         public async Task<IActionResult> UpdateStatusTask(int id, int status)

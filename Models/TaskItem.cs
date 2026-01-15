@@ -20,6 +20,10 @@ namespace go_han.Models
         [ForeignKey("AssigneeId")]
         public virtual User Assignee { get; set; } = null!;
 
+        public int AssignerId { get; set; }
+        [ForeignKey("AssignerId")]
+        public virtual User Assigner { get; set; } = null!;
+
         [Required, StringLength(200)]
         public required string Title { get; set; }
         public required string Content { get; set; }

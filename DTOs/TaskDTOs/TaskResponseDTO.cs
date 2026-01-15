@@ -18,6 +18,9 @@ namespace go_han.DTOs.TaskDTOs
         public int AssigneeId { get; set; }
         public UserDto? Assignee {get; set;}
 
+        public int? AssignerId { get; set; }
+        public UserDto? Assigner {get; set;}
+
         public required string Title { get; set; }
         public required string Content { get; set; }
 

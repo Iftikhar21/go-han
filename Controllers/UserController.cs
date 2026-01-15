@@ -57,11 +57,15 @@ namespace go_han.Controllers
             var user = await _repository.CreatedUserAsync(listUser);
             if (user == null)
                 return Conflict(ResponseResult.Fail<UserDto>("User already exist"));
+                
+            var getUser = await _repository.GetUserByIdAsync(user.Id);
+            if (getUser == null)
+                return NotFound(ResponseResult.Fail<UserDto>("User not found"));
 
             return CreatedAtAction(
                 nameof(GetUserById),
                 new { id = user.Id },
-                ResponseResult.Success(user.ToUserDto(), "User created")
+                ResponseResult.Success(getUser.ToUserDto(), "User created")
             );
         }
         [HttpPut("{id}")]
@@ -85,7 +89,7 @@ namespace go_han.Controllers
             if (user == false)
                 return NotFound(ResponseResult.Fail<UserDto>("User not found"));
 
-            return Ok(ResponseResult.Success("User deleted"));
+            return Ok(ResponseResult.Success(user, "User deleted"));
         }
 
     }

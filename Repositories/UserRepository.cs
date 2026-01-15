@@ -47,8 +47,9 @@ namespace go_han.Repositories
             if (existUser != null)
                 return null!;
 
-            await _context.Users.AddAsync(user);
+            var result = await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+
 
             return user;
         }

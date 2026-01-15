@@ -6,9 +6,9 @@ using go_han.Data;
 using go_han.Models;
 using Microsoft.EntityFrameworkCore;
 using go_han.DTOs.Projects;
-using go_han.Repsitories.IRepositories;
+using go_han.Repositories.IRepositories;
 
-namespace go_han.Repsitories
+namespace go_han.Repositories
 {
     public class ProjectRepository : IProjectRepository
     {

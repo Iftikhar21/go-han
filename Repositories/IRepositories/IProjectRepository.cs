@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using go_han.DTOs.Projects;
 
-namespace go_han.Repsitories.IRepositories
+namespace go_han.Repositories.IRepositories
 {
     public interface IProjectRepository
     {
@@ -16,6 +16,5 @@ namespace go_han.Repsitories.IRepositories
         Task<List<ProjectListDto>> GetProjectsByUserIdAsync(int userId);
         Task<bool> AddProjectMembersAsync(int projectId, List<AddProjectsMember> members);
         Task<bool> RemoveProjectMemberAsync(int projectId, int userId);
-        
     }
 }

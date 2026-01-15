@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using go_han.Repsitories.IRepositories;
+using go_han.Repositories.IRepositories;
 using go_han.Models;
 using go_han.DTOs.Projects;
 using go_han.DTOs;

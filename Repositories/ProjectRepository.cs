@@ -128,5 +128,16 @@ namespace go_han.Repsitories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteProjectAsync(int projectId)
+        {
+            var existProject = await _context.Projects.FindAsync(projectId);
+            if (existProject == null)
+                return false;
+
+            _context.Projects.Remove(existProject);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

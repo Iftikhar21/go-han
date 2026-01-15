@@ -124,5 +124,15 @@ namespace go_han.Controllers
 
             return Ok(ResponseResult.Success(true, "Project member removed successfully"));
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProject(int id)
+        {
+            var result = await _projectRepository.DeleteProjectAsync(id);
+            if (!result)
+                return NotFound(ResponseResult.Fail<bool>("Project not found"));
+
+            return Ok(ResponseResult.Success(true, "Project deleted successfully"));
+        }
     }
 }

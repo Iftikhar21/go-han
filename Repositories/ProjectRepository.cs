@@ -63,7 +63,7 @@ namespace go_han.Repsitories
         public async Task<List<Project>> GetProjectsByStatusAsync(string status)
         {
             return await _context.Projects
-                .Where(p => p.Status.Equals(status, StringComparison.OrdinalIgnoreCase))
+                .Where(p => p.Status.Trim() == status.Trim())
                 .Include(p => p.Lead)
                 .Include(p => p.CoLead)
                 .ToListAsync();

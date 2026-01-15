@@ -57,7 +57,7 @@ namespace go_han.Controllers
             var user = await _repository.CreatedUserAsync(listUser);
             if (user == null)
                 return Conflict(ResponseResult.Fail<UserDto>("User already exist"));
-                
+
             var getUser = await _repository.GetUserByIdAsync(user.Id);
             if (getUser == null)
                 return NotFound(ResponseResult.Fail<UserDto>("User not found"));
@@ -92,5 +92,18 @@ namespace go_han.Controllers
             return Ok(ResponseResult.Success(user, "User deleted"));
         }
 
+        [HttpPatch("{id}/role")]
+        public async Task<IActionResult> UpdateRoleUser(int id, int roleId)
+        {
+            var user = await _repository.UpdateRoleUserAsync(id, roleId);
+            if (user == false)
+                return NotFound(ResponseResult.Fail<UserDto>("User not found"));
+                
+            var getUser = await _repository.GetUserByIdAsync(id);
+            if (getUser == null)
+                return NotFound(ResponseResult.Fail<UserDto>("User not found"));
+
+            return Ok(ResponseResult.Success(getUser.ToUserDto(), "Role updated"));
+        }
     }
 }

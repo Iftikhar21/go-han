@@ -7,6 +7,8 @@ using go_han.Repsitories.IRepositories;
 using go_han.Models;
 using go_han.DTOs.Projects;
 using go_han.DTOs;
+using go_han.Mappers;
+using go_han.Utils;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -27,104 +29,100 @@ namespace go_han.Controllers
         public async Task<IActionResult> GetAllProjects()
         {
             var projects = await _projectRepository.GetAllProjectsAsync();
-            var response = new ApiResponse<List<ProjectListDto>>
-            {
-                Success = true,
-                Message = "Projects retrieved successfully",
-                Data = projects
-            };
-            return Ok(response);
+            if (!projects.Any())
+                return Ok(ResponseResult.Success(new List<ProjectListDto>(), "No projects found"));
+
+            var projectsDto = projects.Select(x => x.ToProjectListDto()).ToList();
+            return Ok(ResponseResult.Success(projectsDto, "Projects retrieved successfully"));
         }
 
         [HttpGet("{projectId}")]
         public async Task<IActionResult> GetProjectById(int projectId)
         {
             var project = await _projectRepository.GetProjectByIdAsync(projectId);
-            var response = new ApiResponse<ProjectDetailDto?>
-            {
-                Success = project != null,
-                Message = project != null ? "Project retrieved successfully" : "Project not found",
-                Data = project
-            };
-            return Ok(response);
+            if (project == null)
+                return NotFound(ResponseResult.Fail<ProjectDetailDto>("Project not found"));
+
+            var projectDto = project.ToProjectDetailDto();
+            return Ok(ResponseResult.Success(projectDto, "Project retrieved successfully"));
         }
 
         [HttpGet("{projectId}/members")]
         public async Task<IActionResult> GetProjectMembers(int projectId)
         {
             var members = await _projectRepository.GetProjectMembersAsync(projectId);
-            var response = new ApiResponse<List<ProjectMemberDto>>
-            {
-                Success = true,
-                Message = "Project members retrieved successfully",
-                Data = members
-            };
-            return Ok(response);
+            if (!members.Any())
+                return Ok(ResponseResult.Success(new List<ProjectMemberDto>(), "No members found"));
+
+            var membersDto = members.Select(x => x.ToProjectMemberDto()).ToList();
+            return Ok(ResponseResult.Success(membersDto, "Project members retrieved successfully"));
         }
 
         [HttpGet("status/{status}")]
         public async Task<IActionResult> GetProjectsByStatus(string status)
         {
             var projects = await _projectRepository.GetProjectsByStatusAsync(status);
-            var response = new ApiResponse<List<ProjectListDto>>
-            {
-                Success = true,
-                Message = "Projects retrieved successfully",
-                Data = projects
-            };
-            return Ok(response);
+            if (!projects.Any())
+                return Ok(ResponseResult.Success(new List<ProjectListDto>(), "No projects found with this status"));
+
+            var projectsDto = projects.Select(x => x.ToProjectListDto()).ToList();
+            return Ok(ResponseResult.Success(projectsDto, "Projects retrieved successfully"));
         }
 
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetProjectsByUserId(int userId)
         {
             var projects = await _projectRepository.GetProjectsByUserIdAsync(userId);
-            var response = new ApiResponse<List<ProjectListDto>>
-            {
-                Success = true,
-                Message = "Projects retrieved successfully",
-                Data = projects
-            };
-            return Ok(response);
-        }
+            if (!projects.Any())
+                return Ok(ResponseResult.Success(new List<ProjectListDto>(), "No projects found for this user"));
 
-        [HttpPost("{projectId}/members")]
-        public async Task<IActionResult> AddProjectMembers(int projectId, [FromBody] List<AddProjectsMember> members)
-        {
-            var result = await _projectRepository.AddProjectMembersAsync(projectId, members);
-            var response = new ApiResponse<bool>
-            {
-                Success = true,
-                Message = "Project members added successfully",
-                Data = result
-            };
-            return Ok(response);
+            var projectsDto = projects.Select(x => x.ToProjectListDto()).ToList();
+            return Ok(ResponseResult.Success(projectsDto, "Projects retrieved successfully"));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectsDto dto)
         {
-            var result = await _projectRepository.CreateProjectAsync(dto);
-            var response = new ApiResponse<int>
-            {
-                Success = true,
-                Message = "Project created successfully",
-                Data = result
-            };
-            return Ok(response);
+            if (dto == null)
+                return BadRequest(ResponseResult.Fail<ProjectDetailDto>("Invalid project data"));
+
+            var project = await _projectRepository.CreateProjectAsync(dto);
+            if (project == null)
+                return BadRequest(ResponseResult.Fail<ProjectDetailDto>("Failed to create project"));
+                
+            var getProject = await _projectRepository.GetProjectByIdAsync(project.Id);
+            if (getProject == null)
+                return NotFound(ResponseResult.Fail<ProjectDetailDto>("Project not found"));
+
+            var projectDto = getProject.ToProjectDetailDto();
+            return CreatedAtAction(
+                nameof(GetProjectById),
+                new { projectId = project.Id },
+                ResponseResult.Success(projectDto, "Project created successfully")
+            );
+        }
+
+        [HttpPost("{projectId}/members")]
+        public async Task<IActionResult> AddProjectMembers(int projectId, [FromBody] List<AddProjectsMember> members)
+        {
+            if (members == null || !members.Any())
+                return BadRequest(ResponseResult.Fail<bool>("No members provided"));
+
+            var result = await _projectRepository.AddProjectMembersAsync(projectId, members);
+            if (!result)
+                return BadRequest(ResponseResult.Fail<bool>("Failed to add project members"));
+
+            return Ok(ResponseResult.Success(true, "Project members added successfully"));
         }
 
         [HttpDelete("{projectId}/members/{userId}")]
         public async Task<IActionResult> RemoveProjectMember(int projectId, int userId)
         {
             var result = await _projectRepository.RemoveProjectMemberAsync(projectId, userId);
-            var response = new ApiResponse<bool>
-            {
-                Success = true,
-                Message = "Project member removed successfully",
-                Data = result
-            };
-            return Ok(response);
+            if (!result)
+                return NotFound(ResponseResult.Fail<bool>("Project member not found"));
+
+            return Ok(ResponseResult.Success(true, "Project member removed successfully"));
         }
     }
 }

@@ -41,8 +41,8 @@ namespace go_han.Controllers
         {
             var task = await _taskItemRepository.GetTaskByIdAsync(id);
 
-            if(task == null)
-            return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+            if (task == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
 
             var response = TaskItemMapper.TaskResponse(task);
             return Ok(ResponseResult.Success(response, "Successfully retrieve data"));
@@ -53,8 +53,8 @@ namespace go_han.Controllers
         {
             var tasks = await _taskItemRepository.GetTaskByStatusAsync(status);
 
-            if(tasks == null)
-            return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+            if (tasks == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
 
             var response = tasks.Select(task => TaskItemMapper.TaskResponse(task)).ToList();
             return Ok(ResponseResult.Success(response, "Succesfully retrieve data"));
@@ -65,8 +65,8 @@ namespace go_han.Controllers
         {
             var tasks = await _taskItemRepository.GetTaskByProjectIdAsync(id);
 
-            if(tasks == null)
-            return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+            if (tasks == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
 
             var response = tasks.Select(task => TaskItemMapper.TaskResponse(task)).ToList();
             return Ok(ResponseResult.Success(response, "Successfully retrieve data"));
@@ -76,27 +76,28 @@ namespace go_han.Controllers
         public async Task<IActionResult> CreateTask(TaskCreateRequestDTO req)
         {
             var newTask = TaskItemMapper.TaskCreate(req);
-            if(newTask == null)
-            return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Input Invalid!"));
+            if (newTask == null)
+                return BadRequest(ResponseResult.Fail<TaskResponseDTO>("Input Invalid!"));
 
             var isProject = await _projectRepository.GetProjectByIdAsync(req.ProjectId);
-            if(isProject == null)
-            return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Project Id not found.."));
+            if (isProject == null)
+                return BadRequest(ResponseResult.Fail<TaskResponseDTO>("Project Id not found.."));
 
             var isAssigneeIdValid = await _userRepository.GetUserByIdAsync(req.AssigneeId);
-            if(isAssigneeIdValid == null)
-            return BadRequest(ResponseResult.Fail<TaskCreateRequestDTO>("Assignee Id not found.."));
+            if (isAssigneeIdValid == null)
+                return BadRequest(ResponseResult.Fail<TaskResponseDTO>("Assignee Id not found.."));
 
-            await _taskItemRepository.CreateTaskAsync(newTask);
-            return Ok(ResponseResult.Success(newTask, "Successfully create task"));
+            var createdTask = await _taskItemRepository.CreateTaskAsync(newTask);
+            var response = TaskItemMapper.TaskResponse(createdTask);
+            return CreatedAtAction(nameof(GetTaskById), new { id = createdTask.Id }, ResponseResult.Success(response, "Successfully create task"));
         }
 
         [HttpPatch("{id}/start")]
         public async Task<IActionResult> UpdateStatusTask(int id, int status)
         {
             var result = await _taskItemRepository.UpdateStatusTaskAsync(id, status);
-            
-            if (result == null) 
+
+            if (result == null)
                 return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
 
             var response = TaskItemMapper.TaskResponse(result);
@@ -107,8 +108,11 @@ namespace go_han.Controllers
         public async Task<IActionResult> SubmitTask(int id, int status, string memberComment)
         {
             var result = await _taskItemRepository.UpdateSubmitTaskAsync(id, status, memberComment);
-            if (result == null) return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
-            return Ok(ResponseResult.Success(result, "Successfully update status"));
+            if (result == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+
+            var response = TaskItemMapper.TaskResponse(result);
+            return Ok(ResponseResult.Success(response, "Successfully update status"));
         }
 
         // PUT: api/tasks/5/approve?status=3&approvedById=10
@@ -116,8 +120,11 @@ namespace go_han.Controllers
         public async Task<IActionResult> ApproveTask(int id, int status, int approvedById, DateTime? approvedAt = null)
         {
             var result = await _taskItemRepository.UpdateApprovalTaskAsync(id, status, approvedById, approvedAt);
-            if (result == null) return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
-            return Ok(ResponseResult.Success(result, "Successfully update status"));
+            if (result == null)
+                return NotFound(ResponseResult.Fail<TaskResponseDTO>("Data not found.."));
+
+            var response = TaskItemMapper.TaskResponse(result);
+            return Ok(ResponseResult.Success(response, "Successfully update status"));
         }
 
         [HttpDelete("{id}")]

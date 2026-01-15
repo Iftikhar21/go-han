@@ -79,9 +79,9 @@ namespace go_han.Controllers
         {
             var division = await _repository.DeleteDivisionAsync(id);
             if (division == false)
-                return NotFound(ResponseResult.Fail<List<Division>>($"Division with id: {id} not found"));
+                return NotFound(ResponseResult.Fail<DivisionDTO>($"Division with id: {id} not found"));
 
-            return Ok(ResponseResult.Success<DivisionDTO>(null, $"Division with id: {id} deleted successfully"));
+            return Ok(ResponseResult.Success("OK", $"Division with id: {id} deleted successfully"));
         }
     }
 }

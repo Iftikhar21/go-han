@@ -14,49 +14,81 @@ namespace go_han.Mappers
     {
         public static TaskResponseDTO TaskResponse(TaskItem task)
         {
+            RoleReadDto? assigneeRole = null;
+            if (task.Assignee?.Role != null)
+            {
+                assigneeRole = new RoleReadDto
+                {
+                    Id = task.Assignee.Role.Id,
+                    RoleName = task.Assignee.Role.RoleName
+                };
+            }
+
+            UserDto? assigneeDto = null;
+            if (task.Assignee != null)
+            {
+                assigneeDto = new UserDto
+                {
+                    Id = task.Assignee.Id,
+                    Username = task.Assignee.Username,
+                    Email = task.Assignee.Email,
+                    Role = assigneeRole
+                };
+            }
+
+            RoleReadDto? approvedByRole = null;
+            if (task.ApprovedBy?.Role != null)
+            {
+                approvedByRole = new RoleReadDto
+                {
+                    Id = task.ApprovedBy.Role.Id,
+                    RoleName = task.ApprovedBy.Role.RoleName
+                };
+            }
+
+            UserDto? approvedByDto = null;
+            if (task.ApprovedBy != null)
+            {
+                approvedByDto = new UserDto
+                {
+                    Id = task.ApprovedBy.Id,
+                    Username = task.ApprovedBy.Username,
+                    Email = task.ApprovedBy.Email,
+                    Role = approvedByRole
+                };
+            }
+
+            ProjectDetailDto? projectDto = null;
+            if (task.Project != null)
+            {
+                projectDto = new ProjectDetailDto
+                {
+                    Id = task.Project.Id,
+                    ProjectName = task.Project.ProjectName,
+                    Description = task.Project.Description,
+                    Status = task.Project.Status,
+                    Lead = task.Project.Lead?.Username ?? "",
+                    CoLead = task.Project.CoLead?.Username,
+                    StartDate = task.Project.StartDate,
+                    EndDate = task.Project.EndDate
+                };
+            }
+
             return new TaskResponseDTO
             {
                 Id = task.Id,
                 ProjectId = task.ProjectId,
-                ProjectData = new ProjectDetailDto
-                {
-                    ProjectName = task.Project.ProjectName,
-                    Description = task.Project.Description,
-                    Lead = task.Project.Lead.Username,
-                    CoLead = task.Project.CoLead != null ? task.Project.CoLead.Username : null,
-                    StartDate = task.Project.StartDate,
-                    EndDate = task.Project.EndDate
-                },
+                ProjectData = projectDto,
                 AssigneeId = task.AssigneeId,
-                Assignee = new UserDto
-                {
-                    Username = task.Assignee.Username,
-                    Email = task.Assignee.Email,
-                    Role = new RoleReadDto
-                    {
-                        Id = task.Assignee.Role.Id,
-                        RoleName = task.Assignee.Role.RoleName
-                    }
-                },
+                Assignee = assigneeDto,
                 Title = task.Title,
                 Content = task.Content,
                 Difficulty = task.Difficulty,
                 Deadline = task.Deadline,
                 Status = task.Status,
-
-                // Approval
                 MemberComment = task.MemberComment,
                 ApprovedById = task.ApprovedById,
-                ApprovedBy = new UserDto
-                {
-                    Username = task.ApprovedBy.Username,
-                    Email = task.ApprovedBy.Email,
-                    Role = new RoleReadDto
-                    {
-                        Id = task.ApprovedBy.Role.Id,
-                        RoleName = task.ApprovedBy.Role.RoleName
-                    }
-                },
+                ApprovedBy = approvedByDto,
                 ApprovedAt = task.ApprovedAt
             };
         }

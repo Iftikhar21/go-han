@@ -30,8 +30,8 @@ namespace go_han.DTOs.TaskDTOs
 
         // Approval System
         public  string MemberComment { get; set; } = string.Empty;
-        public int? ApprovedById { get; set; }
-        public UserDto? ApprovedBy {get; set;}
+        public int? ApprovedById { get; set; } = null;
+        public UserDto? ApprovedBy {get; set;} = null;
 
         public DateTime? ApprovedAt { get; set; }
     }

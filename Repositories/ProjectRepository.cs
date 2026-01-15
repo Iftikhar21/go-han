@@ -20,25 +20,16 @@ namespace go_han.Repsitories
         }
 
         // GET ALL PROJECTS
-        public async Task<List<ProjectListDto>> GetAllProjectsAsync()
+        public async Task<List<Project>> GetAllProjectsAsync()
         {
             return await _context.Projects
-                .Select(p => new ProjectListDto
-                {
-                    Id = p.Id,
-                    ProjectName = p.ProjectName,
-                    Description = p.Description,
-                    LeadName = p.Lead.Username,
-                    CoLeadName = p.CoLead != null ? p.CoLead.Username : null,
-                    Status = p.Status,
-                    StartDate = p.StartDate,
-                    EndDate = p.EndDate
-                })
+                .Include(p => p.Lead)
+                .Include(p => p.CoLead)
                 .ToListAsync();
         }
 
         // CREATE PROJECT
-        public async Task<int> CreateProjectAsync(CreateProjectsDto dto)
+        public async Task<Project?> CreateProjectAsync(CreateProjectsDto dto)
         {
             var project = new Project
             {
@@ -53,92 +44,71 @@ namespace go_han.Repsitories
 
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
-            return project.Id;
+            return project;
         }
 
         // GET PROJECT DETAIL
-        public async Task<ProjectDetailDto?> GetProjectByIdAsync(int projectId)
+        public async Task<Project?> GetProjectByIdAsync(int projectId)
         {
             return await _context.Projects
-                .Where(p => p.Id == projectId)
-                .Select(p => new ProjectDetailDto
-                {
-                    Id = p.Id,
-                    ProjectName = p.ProjectName,
-                    Description = p.Description,
-                    Status = p.Status,
-                    Lead = p.Lead.Username,
-                    CoLead = p.CoLead != null ? p.CoLead.Username : null,
-                    StartDate = p.StartDate,
-                    EndDate = p.EndDate,
-                    Members = p.Members.Select(m => new ProjectMemberDto
-                    {
-                        UserId = m.User.Id,
-                        Username = m.User.Username,
-                        Division = m.Division.DivisionName
-                    }).ToList()
-                })
-                .FirstOrDefaultAsync();
+                .Include(p => p.Lead)
+                .Include(p => p.CoLead)
+                .Include(p => p.Members)
+                    .ThenInclude(m => m.User)
+                .Include(p => p.Members)
+                    .ThenInclude(m => m.Division)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
         }
 
-        public async Task<List<ProjectListDto>> GetProjectsByStatusAsync(string status)
+        public async Task<List<Project>> GetProjectsByStatusAsync(string status)
         {
             return await _context.Projects
                 .Where(p => p.Status.Equals(status, StringComparison.OrdinalIgnoreCase))
-                .Select(p => new ProjectListDto
-                {
-                    Id = p.Id,
-                    ProjectName = p.ProjectName,
-                    Description = p.Description,
-                    LeadName = p.Lead.Username,
-                    CoLeadName = p.CoLead != null ? p.CoLead.Username : null,
-                    Status = p.Status,
-                    StartDate = p.StartDate,
-                    EndDate = p.EndDate
-                })
+                .Include(p => p.Lead)
+                .Include(p => p.CoLead)
                 .ToListAsync();
         }
 
-        public async Task<List<ProjectMemberDto>> GetProjectMembersAsync(int projectId)
+        public async Task<List<ProjectMember>> GetProjectMembersAsync(int projectId)
         {
             return await _context.ProjectMembers
                 .Where(pm => pm.ProjectId == projectId)
-                .Select(pm => new ProjectMemberDto
-                {
-                    UserId = pm.User.Id,
-                    Username = pm.User.Username,
-                    Division = pm.Division.DivisionName
-                })
+                .Include(pm => pm.User)
+                .Include(pm => pm.Division)
                 .ToListAsync();
         }
 
-        public async Task<List<ProjectListDto>> GetProjectsByUserIdAsync(int userId)
+        public async Task<List<Project>> GetProjectsByUserIdAsync(int userId)
         {
             return await _context.Projects
                 .Where(p => p.LeadId == userId || p.CoLeadId == userId || p.Members.Any(m => m.UserId == userId))
-                .Select(p => new ProjectListDto
-                {
-                    Id = p.Id,
-                    ProjectName = p.ProjectName,
-                    Description = p.Description,
-                    LeadName = p.Lead.Username,
-                    CoLeadName = p.CoLead != null ? p.CoLead.Username : null,
-                    Status = p.Status,
-                    StartDate = p.StartDate,
-                    EndDate = p.EndDate
-                })
+                .Include(p => p.Lead)
+                .Include(p => p.CoLead)
                 .ToListAsync();
         }
+
         public async Task<bool> AddProjectMembersAsync(int projectId, List<AddProjectsMember> members)
         {
+            // Verify project exists
+            var project = await _context.Projects.FindAsync(projectId);
+            if (project == null)
+                return false;
+
             foreach (var m in members)
             {
-                _context.ProjectMembers.Add(new ProjectMember
+                // Check if member already exists
+                var existingMember = await _context.ProjectMembers
+                    .FirstOrDefaultAsync(pm => pm.ProjectId == projectId && pm.UserId == m.UserId);
+
+                if (existingMember == null)
                 {
-                    ProjectId = projectId,
-                    UserId = m.UserId,
-                    DivisionId = m.DivisionId
-                });
+                    _context.ProjectMembers.Add(new ProjectMember
+                    {
+                        ProjectId = projectId,
+                        UserId = m.UserId,
+                        DivisionId = m.DivisionId
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -158,6 +128,5 @@ namespace go_han.Repsitories
             await _context.SaveChangesAsync();
             return true;
         }
-        
     }
 }

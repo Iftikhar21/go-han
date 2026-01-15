@@ -12,6 +12,6 @@ namespace go_han.DTOs.User
         public int Id { get; set; }
         public required string Username { get; set; }
         public required string Email { get; set; }
-        public RoleReadDto Role { get; set; } = null!;
+        public RoleReadDto? Role { get; set; }
     }
 }

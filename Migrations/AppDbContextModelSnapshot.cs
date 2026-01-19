@@ -131,16 +131,11 @@ namespace go_han.Migrations
                         new
                         {
                             Id = 1,
-                            RoleName = "super-admin"
-                        },
-                        new
-                        {
-                            Id = 2,
                             RoleName = "admin"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 2,
                             RoleName = "employee"
                         });
                 });

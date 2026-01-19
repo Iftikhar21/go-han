@@ -31,9 +31,8 @@ namespace go_han.Data
 
             // Seed Data untuk Roles
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, RoleName = "super-admin" },
-                new Role { Id = 2, RoleName = "admin" },
-                new Role { Id = 3, RoleName = "employee" }
+                new Role { Id = 1, RoleName = "admin" },
+                new Role { Id = 2, RoleName = "employee" }
             );
 
             // --- SOLUSI CASCADE PATH ERROR ---

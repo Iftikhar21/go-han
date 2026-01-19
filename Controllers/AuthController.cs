@@ -41,7 +41,11 @@ namespace go_han.Controllers
             if (user == null)
                 return Conflict(ResponseResult.Fail<UserDto>("User already exist"));
 
-            return Ok(ResponseResult.Success(user.ToUserDto(), "Register successful"));
+            var getUser = await _userRepository.GetUserByIdAsync(user.Id);
+            if (getUser == null)
+                return NotFound(ResponseResult.Fail<UserDto>("User not found"));
+
+            return Ok(ResponseResult.Success(getUser.ToUserDto(), "Register successful"));
         }
 
         [HttpPost("login")]

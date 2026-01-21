@@ -99,7 +99,7 @@ namespace go_han.Controllers
             if (!users.Any())
                 return NotFound(ResponseResult.Fail<UserDto>("User not found"));
 
-            var userDto = users.Select(x => x.ToUserDto()).ToList();
+            var userDto = users.Select(x => x?.ToUserDto()).ToList();
             return Ok(ResponseResult.Success(userDto, "User found"));
         }
 

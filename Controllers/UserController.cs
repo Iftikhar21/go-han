@@ -103,6 +103,17 @@ namespace go_han.Controllers
             return Ok(ResponseResult.Success(userDto, "User found"));
         }
 
+        [HttpGet("employee/role")]
+        public async Task<IActionResult> GetUsersEmployeeAsync()
+        {
+            var users = await _repository.GetUsersEmployeeAsync();
+            if (!users.Any())
+                return NotFound(ResponseResult.Fail<UserDto>("User not found"));
+
+            var userDto = users.Select(x => x?.ToUserDto()).ToList();
+            return Ok(ResponseResult.Success(userDto, "User found"));
+        }
+
         [HttpPatch("{id}/role")]
         public async Task<IActionResult> UpdateRoleUser(int id, int roleId)
         {

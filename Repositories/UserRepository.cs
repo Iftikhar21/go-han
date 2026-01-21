@@ -94,6 +94,15 @@ namespace go_han.Repositories
             return users!;
         }
 
+        public async Task<List<User?>> GetUsersEmployeeAsync()
+        {
+            var users = await _context.Users.Include(x => x.Role).Where(x => x.RoleId == 2).ToListAsync();
+            if (!users.Any())
+                return null!;
+
+            return users!;
+        }
+
         public async Task<bool> UpdateRoleUserAsync(int id, int roleId)
         {
             var existUser = await _context.Users.FindAsync(id);

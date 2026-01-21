@@ -85,9 +85,13 @@ namespace go_han.Repositories
             return true;
         }
 
-        public async Task<List<User>> GetUsersByRoleAsync(int roleId)
+        public async Task<List<User?>> GetUsersByRoleAsync(int roleId)
         {
-            return await _context.Users.Include(x => x.Role).Where(x => x.RoleId == roleId).ToListAsync();
+            var users = await _context.Users.Include(x => x.Role).Where(x => x.RoleId == roleId).ToListAsync();
+            if (!users.Any())
+                return null!;
+
+            return users!;
         }
 
         public async Task<bool> UpdateRoleUserAsync(int id, int roleId)

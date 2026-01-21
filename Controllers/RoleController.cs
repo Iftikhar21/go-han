@@ -11,12 +11,14 @@ using go_han.Utils;
 using Microsoft.AspNetCore.Mvc;
 using go_han.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace go_han.Controllers.Roles
 {
     [Authorize]
     [ApiController]
     [Route("api/roles")]
+    [EnableRateLimiting("fixed")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleRepository _repository;

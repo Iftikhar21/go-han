@@ -9,12 +9,14 @@ using go_han.Repositories.IRepository;
 using go_han.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace go_han.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/user")]
+    [EnableRateLimiting("fixed")]
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repository;

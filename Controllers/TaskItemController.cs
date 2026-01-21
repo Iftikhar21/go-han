@@ -9,12 +9,14 @@ using go_han.Repsitories.IRepositories;
 using go_han.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace go_han.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/tasks")]
+    [EnableRateLimiting("fixed")]
     public class TaskItemController : ControllerBase
     {
         private readonly ITaskItemRepository _taskItemRepository;

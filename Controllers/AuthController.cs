@@ -12,11 +12,13 @@ using go_han.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace go_han.Controllers
 {
     [ApiController]
     [Route("api/auth")]
+    [EnableRateLimiting("fixed")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repository;

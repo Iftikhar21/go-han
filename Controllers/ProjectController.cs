@@ -10,6 +10,7 @@ using go_han.DTOs;
 using go_han.Mappers;
 using go_han.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace go_han.Controllers
@@ -17,6 +18,7 @@ namespace go_han.Controllers
     [Authorize]
     [ApiController]
     [Route("api/projects")]
+    [EnableRateLimiting("fixed")]
     public class ProjectController : ControllerBase
     {
         private readonly IProjectRepository _projectRepository;

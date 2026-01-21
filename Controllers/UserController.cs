@@ -92,13 +92,24 @@ namespace go_han.Controllers
             return Ok(ResponseResult.Success(user, "User deleted"));
         }
 
+        [HttpGet("{id}/role")]
+        public async Task<IActionResult> GetRoleUser(int id)
+        {
+            var users = await _repository.GetUsersByRoleAsync(id);
+            if (!users.Any())
+                return NotFound(ResponseResult.Fail<UserDto>("User not found"));
+
+            var userDto = users.Select(x => x.ToUserDto()).ToList();
+            return Ok(ResponseResult.Success(userDto, "User found"));
+        }
+
         [HttpPatch("{id}/role")]
         public async Task<IActionResult> UpdateRoleUser(int id, int roleId)
         {
             var user = await _repository.UpdateRoleUserAsync(id, roleId);
             if (user == false)
                 return NotFound(ResponseResult.Fail<UserDto>("User not found"));
-                
+
             var getUser = await _repository.GetUserByIdAsync(id);
             if (getUser == null)
                 return NotFound(ResponseResult.Fail<UserDto>("User not found"));

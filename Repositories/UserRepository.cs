@@ -85,6 +85,11 @@ namespace go_han.Repositories
             return true;
         }
 
+        public async Task<List<User>> GetUsersByRoleAsync(int roleId)
+        {
+            return await _context.Users.Include(x => x.Role).Where(x => x.RoleId == roleId).ToListAsync();
+        }
+
         public async Task<bool> UpdateRoleUserAsync(int id, int roleId)
         {
             var existUser = await _context.Users.FindAsync(id);
@@ -93,7 +98,7 @@ namespace go_han.Repositories
 
             existUser.RoleId = roleId;
             await _context.SaveChangesAsync();
-            
+
             return true;
         }
     }

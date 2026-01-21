@@ -15,6 +15,7 @@ namespace go_han.Repositories.IRepository
         public Task<User?> UpdateUserAsync(int id, User user);
         public Task<bool> DeleteUserAsync(int id);
 
+        public Task<List<User?>> GetUsersByRoleAsync(int roleId);
         public Task<bool> UpdateRoleUserAsync(int id, int roleId);
     }
 }

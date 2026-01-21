@@ -29,7 +29,7 @@ namespace go_han.DTOs.TaskDTOs
         public DateTime? Deadline { get; set; }
 
         // Status: 0=Todo, 1=InProgress, 2=MemberApproved, 3=FullyCompleted
-        public int Status { get; set; } = 0;
+        public string Status { get; set; } = string.Empty;
 
         // Approval System
         public  string MemberComment { get; set; } = string.Empty;

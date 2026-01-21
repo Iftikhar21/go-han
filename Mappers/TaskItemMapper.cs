@@ -101,6 +101,13 @@ namespace go_han.Mappers
                 };
             }
 
+            
+            string statusInString = "";
+            if(task.Status == 0 ) statusInString = "Todo";
+            else if (task.Status == 1) statusInString = "In Progress";
+            else if (task.Status == 2) statusInString = "Done";
+            else if (task.Status == 3) statusInString = "Rejected";
+
             return new TaskResponseDTO
             {
                 Id = task.Id,
@@ -114,7 +121,7 @@ namespace go_han.Mappers
                 Content = task.Content,
                 Difficulty = task.Difficulty,
                 Deadline = task.Deadline,
-                Status = task.Status,
+                Status = statusInString,
                 MemberComment = task.MemberComment,
                 ApprovedById = task.ApprovedById,
                 ApprovedBy = approvedByDto,

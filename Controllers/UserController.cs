@@ -20,9 +20,12 @@ namespace go_han.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repository;
-        public UserController(IUserRepository repository)
+        private readonly IRoleRepository _roleRepository;
+
+        public UserController(IUserRepository repository, IRoleRepository roleRepository)
         {
             this._repository = repository;
+            this._roleRepository = roleRepository;
         }
         [HttpGet]
         public async Task<IActionResult> GetUsersAsync()
@@ -97,6 +100,10 @@ namespace go_han.Controllers
         [HttpGet("{id}/role")]
         public async Task<IActionResult> GetRoleUser(int id)
         {
+            var existRole = await _roleRepository.GetRoleByIdAsync(id);
+            if (existRole == null)
+                return NotFound(ResponseResult.Fail<UserDto>("Role not found"));
+
             var users = await _repository.GetUsersByRoleAsync(id);
             if (!users.Any())
                 return NotFound(ResponseResult.Fail<UserDto>("User not found"));

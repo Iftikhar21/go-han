@@ -105,8 +105,8 @@ namespace go_han.Mappers
             string statusInString = "";
             if(task.Status == 0 ) statusInString = "Todo";
             else if (task.Status == 1) statusInString = "In Progress";
-            else if (task.Status == 2) statusInString = "Done";
-            else if (task.Status == 3) statusInString = "Rejected";
+            else if (task.Status == 2) statusInString = "Member Approved";
+            else if (task.Status == 3) statusInString = "Fully Completed";
 
             return new TaskResponseDTO
             {

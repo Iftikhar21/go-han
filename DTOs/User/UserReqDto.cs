@@ -9,7 +9,7 @@ namespace go_han.DTOs.User
     {
         public required string Username { get; set; }
         public required string Email { get; set; }
-        public required string PasswordHash { get; set; }
+        public string PasswordHash { get ; set; } = null!;
         public required int RoleId { get; set; }
     }
 }

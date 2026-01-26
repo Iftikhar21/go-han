@@ -32,7 +32,7 @@ namespace go_han.Mappers
             {
                 Username = userDto.Username,
                 Email = userDto.Email,
-                PasswordHash = userDto.PasswordHash,
+                PasswordHash = userDto.PasswordHash ?? "",
                 RoleId = userDto.RoleId
             };
         }

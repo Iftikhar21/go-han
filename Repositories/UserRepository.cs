@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using go_han.Data;
+using go_han.Interface;
 using go_han.Models;
 using go_han.Repositories.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace go_han.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
+        private readonly IPasswordUtils _hasher;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(AppDbContext context, IPasswordUtils hasher)
         {
-            this._context = context;
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._hasher = hasher ?? throw new ArgumentNullException(nameof(hasher));
         }
 
         public async Task<List<User>> GetUsersAsync()
@@ -47,6 +50,7 @@ namespace go_han.Repositories
             if (existUser != null)
                 return null!;
 
+            user.PasswordHash = _hasher.HashPassword(user.PasswordHash);
             var result = await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
@@ -66,6 +70,10 @@ namespace go_han.Repositories
 
             existUser.Username = user.Username;
             existUser.Email = user.Email;
+            if(string.IsNullOrEmpty(user.PasswordHash))
+                existUser.PasswordHash = existUser.PasswordHash;
+            else
+                existUser.PasswordHash = _hasher.HashPassword(user.PasswordHash);
             existUser.RoleId = user.RoleId;
 
             await _context.SaveChangesAsync();
